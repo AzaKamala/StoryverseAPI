@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using StoryverseAPI.Models;
+using StoryverseAPI.Data;
+using StoryverseAPI.Data.Models;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -15,16 +16,23 @@ namespace StoryverseAPI.Controllers
             new User { Id = 2, Username = "User2", Books = new List<Book>() },
         };
 
+        private DB _db;
+
+        public UserController(DB db)
+        {
+            _db = db;
+        }
+
         [HttpGet]
         public IEnumerable<User> GetUsers()
         {
-            return Users;
+            return _db.Users.ToList();
         }
 
         [HttpGet("{id}")]
         public ActionResult<User> GetUser(int id)
         {
-            var user = Users.FirstOrDefault(u => u.Id == id);
+            var user = _db.Users.FirstOrDefault(u => u.Id == id);
 
             if (user == null)
             {
@@ -37,7 +45,9 @@ namespace StoryverseAPI.Controllers
         [HttpPost]
         public ActionResult<User> PostUser(User user)
         {
-            Users.Add(user);
+            _db.Users.Add(user);
+            _db.SaveChanges();
+
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
@@ -49,7 +59,7 @@ namespace StoryverseAPI.Controllers
                 return BadRequest();
             }
 
-            var existingUser = Users.FirstOrDefault(u => u.Id == id);
+            var existingUser = _db.Users.FirstOrDefault(u => u.Id == id);
             if (existingUser == null)
             {
                 return NotFound();
@@ -57,6 +67,7 @@ namespace StoryverseAPI.Controllers
 
             existingUser.Username = user.Username;
             existingUser.Books = user.Books;
+            _db.SaveChanges();
 
             return NoContent();
         }
@@ -64,13 +75,14 @@ namespace StoryverseAPI.Controllers
         [HttpDelete("{id}")]
         public IActionResult DeleteUser(int id)
         {
-            var user = Users.FirstOrDefault(u => u.Id == id);
+            var user = _db.Users.FirstOrDefault(u => u.Id == id);
             if (user == null)
             {
                 return NotFound();
             }
 
             Users.Remove(user);
+            _db.SaveChanges();
 
             return NoContent();
         }

@@ -1,4 +1,4 @@
-﻿namespace StoryverseAPI.Models
+﻿namespace StoryverseAPI.Data.Models
 {
     public class Book
     {
