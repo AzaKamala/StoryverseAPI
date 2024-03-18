@@ -2,7 +2,7 @@
 
 namespace StoryverseAPI.Data.DTOs.Book
 {
-    public class CreateBookDTO
+    public class BookCreateDTO
     {
         [Required]
         public string Title { get; set; }
