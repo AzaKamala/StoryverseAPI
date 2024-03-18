@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StoryverseAPI.Data;
+using StoryverseAPI.Data.DTOs.User;
 using StoryverseAPI.Data.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,11 +11,6 @@ namespace StoryverseAPI.Controllers
     [Route("[controller]")]
     public class UserController : ControllerBase
     {
-        private static readonly List<User> Users = new List<User>
-        {
-            new User { Id = 1, Username = "User1", Books = new List<Book>() },
-            new User { Id = 2, Username = "User2", Books = new List<Book>() },
-        };
 
         private DB _db;
 
@@ -24,13 +20,16 @@ namespace StoryverseAPI.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<User> GetUsers()
+        public IEnumerable<UserDTO> GetUsers()
         {
-            return _db.Users.ToList();
+            List<User> users = _db.Users.ToList();
+            List<UserDTO> userDTOs = users.Select(user => new UserDTO(user)).ToList();
+
+            return userDTOs;
         }
 
         [HttpGet("{id}")]
-        public ActionResult<User> GetUser(int id)
+        public ActionResult<UserDTO> GetUser(int id)
         {
             var user = _db.Users.FirstOrDefault(u => u.Id == id);
 
@@ -39,20 +38,27 @@ namespace StoryverseAPI.Controllers
                 return NotFound();
             }
 
-            return user;
+            return new UserDTO(user);
         }
 
         [HttpPost]
-        public ActionResult<User> PostUser(User user)
+        public ActionResult<UserDTO> PostUser(UserCreateDTO user)
         {
-            _db.Users.Add(user);
+            User newUser = new User
+            {
+                Username = user.Username,
+                Email = user.Email,
+                Password = user.Password
+            };
+
+            _db.Users.Add(newUser);
             _db.SaveChanges();
 
-            return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
+            return CreatedAtAction(nameof(GetUser), new { id = newUser.Id }, user);
         }
 
         [HttpPut("{id}")]
-        public IActionResult PutUser(int id, User user)
+        public IActionResult PutUser(int id, UserDTO user)
         {
             if (id != user.Id)
             {
@@ -65,7 +71,6 @@ namespace StoryverseAPI.Controllers
                 return NotFound();
             }
 
-            existingUser.Username = user.Username;
             existingUser.Books = user.Books;
             _db.SaveChanges();
 
@@ -81,7 +86,7 @@ namespace StoryverseAPI.Controllers
                 return NotFound();
             }
 
-            Users.Remove(user);
+            _db.Users.Remove(user);
             _db.SaveChanges();
 
             return NoContent();
