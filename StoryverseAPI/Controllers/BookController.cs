@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StoryverseAPI.Data;
 using StoryverseAPI.Data.DTOs.Book;
 using StoryverseAPI.Data.Models;
@@ -9,6 +10,7 @@ namespace StoryverseAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class BookController : ControllerBase
     {
         private DB _db;

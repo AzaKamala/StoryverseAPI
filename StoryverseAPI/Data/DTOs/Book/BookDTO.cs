@@ -15,6 +15,6 @@ namespace StoryverseAPI.Data.DTOs.Book
         public long Id { get; set; }
         public string Title { get; set; }
         public Models.User Author { get; set; }
-        public List<Chapter> Chapters { get; set; }
+        public List<Models.Chapter> Chapters { get; set; }
     }
 }
