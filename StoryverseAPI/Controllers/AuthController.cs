@@ -29,7 +29,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("Login")]
-    public IActionResult Login(AuthLoginDTO authLoginDTO)
+    public ActionResult Login(AuthLoginDTO authLoginDTO)
     {
         var user = _db.Users.FirstOrDefault(u => u.Username == authLoginDTO.Username);
 
@@ -49,8 +49,14 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("Register")]
-    public IActionResult Register(AuthRegisterDTO authRegisterDTO)
+    public ActionResult Register(AuthRegisterDTO authRegisterDTO)
     {
+        var userExists = _db.Users.Any(u => u.Username == authRegisterDTO.Username);
+        if (userExists)
+        {
+            return Conflict();
+        }
+
         var salt = GenerateSalt();
 
         var hashedPassword = HashPassword(authRegisterDTO.Password, salt);
