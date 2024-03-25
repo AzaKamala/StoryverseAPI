@@ -14,5 +14,6 @@
         public string Password { get; set; }
         public List<Book> Books { get; set; }
         public Role Role { get; set; } = Role.User;
+        public string Salt { get; set; }
     }
 }
