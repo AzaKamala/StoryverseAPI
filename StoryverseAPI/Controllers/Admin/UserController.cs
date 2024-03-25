@@ -46,11 +46,20 @@ namespace StoryverseAPI.Controllers.Admin
         [HttpPost]
         public ActionResult<UserDTO> PostUser(UserAdminCreateDTO user)
         {
+            var userExists = _db.Users.Any(u => u.Username == user.Username);
+            if (userExists)
+            {
+                return Conflict();
+            }
+
+            var salt = AuthController.GenerateSalt();
+            var hashedPassword = AuthController.HashPassword(user.Password, salt);
+
             User newUser = new User
             {
                 Username = user.Username,
                 Email = user.Email,
-                Password = user.Password,
+                Password = hashedPassword,
                 Role = user.Role.ToLower() == "admin" ? Role.Admin : Role.User
             };
 
