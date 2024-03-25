@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StoryverseAPI.Data;
 using StoryverseAPI.Data.DTOs.Chapter;
 using StoryverseAPI.Data.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace StoryverseAPI.Controllers
+namespace StoryverseAPI.Controllers.Admin
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class ChapterController : ControllerBase
     {
         private DB _db;

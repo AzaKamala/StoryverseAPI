@@ -6,7 +6,7 @@ using StoryverseAPI.Data.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace StoryverseAPI.Controllers
+namespace StoryverseAPI.Controllers.Admin
 {
     [ApiController]
     [Route("[controller]")]

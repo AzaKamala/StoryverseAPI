@@ -1,14 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StoryverseAPI.Data;
 using StoryverseAPI.Data.DTOs.User;
 using StoryverseAPI.Data.Models;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace StoryverseAPI.Controllers
+namespace StoryverseAPI.Controllers.Admin
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class UserController : ControllerBase
     {
 
@@ -20,7 +22,7 @@ namespace StoryverseAPI.Controllers
         }
 
         [HttpGet]
-        public IEnumerable<UserDTO> GetUsers()
+        public ActionResult<IEnumerable<UserDTO>> GetUsers()
         {
             List<User> users = _db.Users.ToList();
             List<UserDTO> userDTOs = users.Select(user => new UserDTO(user)).ToList();
@@ -42,13 +44,14 @@ namespace StoryverseAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<UserDTO> PostUser(UserCreateDTO user)
+        public ActionResult<UserDTO> PostUser(UserAdminCreateDTO user)
         {
             User newUser = new User
             {
                 Username = user.Username,
                 Email = user.Email,
-                Password = user.Password
+                Password = user.Password,
+                Role = user.Role.ToLower() == "admin" ? Role.Admin : Role.User
             };
 
             _db.Users.Add(newUser);
@@ -58,7 +61,7 @@ namespace StoryverseAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult PutUser(int id, UserDTO user)
+        public ActionResult PutUser(int id, UserDTO user)
         {
             if (id != user.Id)
             {
@@ -78,7 +81,7 @@ namespace StoryverseAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult DeleteUser(int id)
+        public ActionResult DeleteUser(int id)
         {
             var user = _db.Users.FirstOrDefault(u => u.Id == id);
             if (user == null)

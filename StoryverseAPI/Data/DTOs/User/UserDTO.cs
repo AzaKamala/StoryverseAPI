@@ -11,6 +11,7 @@ namespace StoryverseAPI.Data.DTOs.User
             this.Email = user.Email;
             this.Password = user.Password;
             this.Books = user.Books;
+            this.Role = user.Role;
         }
 
         public long Id { get; set; }
@@ -18,5 +19,6 @@ namespace StoryverseAPI.Data.DTOs.User
         public string Email { get; set; }
         public string Password { get; set; }
         public List<Models.Book> Books { get; set; }
+        public Role Role { get; set; }
     }
 }
