@@ -10,7 +10,7 @@ namespace StoryverseAPI.Controllers.Admin
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class UserController : ControllerBase
     {
 
